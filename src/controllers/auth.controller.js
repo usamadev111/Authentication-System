@@ -46,3 +46,30 @@ export async function register(req, res) {
     })
 
 }
+
+export async function getToken(req, res) {
+
+    const token = req.headers.authorization?.split(" ")[ 1 ]
+
+    if(!token){
+        return res.status(401).json({
+            message: "Unauthorized User or the Token is Not Found"
+        })
+    }
+
+    const decoded = await jwt.verify(token, config.JWT_SECRET)
+
+    console.log(decoded);
+
+    const user = await userModel.findById(decoded.id)
+
+    res.status(200).json({
+        message: "User Fetched Successfully",
+        user: {
+            username: user.username,
+            email: user.email
+        }
+    })
+    
+
+} 
